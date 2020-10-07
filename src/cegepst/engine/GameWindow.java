@@ -17,55 +17,25 @@ public class GameWindow {
     private Graphics2D buffer;
 
     public GameWindow() {
-        frame = new JFrame();
-        frame.setSize(800, 600);
-        frame.setLocationRelativeTo(null);
-        frame.setResizable(false);
-        frame.setTitle("Bouncing Ball Game");
-        //setUndecorated(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        panel = new JPanel();
-        panel.setBackground(Color.blue);
-        panel.setFocusable(true);
-        panel.setDoubleBuffered(true);
-        frame.add(panel);
-
+        initializeFrame();
+        initializePanel();
         ball = new Ball(25);
     }
 
     public void start() {
         frame.setVisible(true);
-        before = System.currentTimeMillis();
-
+        updateSyncTime();
         while (playing) {
-
             bufferedImage = new BufferedImage(800, 600,
                     BufferedImage.TYPE_INT_RGB);
             buffer = bufferedImage.createGraphics();
-            RenderingHints rh = new RenderingHints(
-                    RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
-            rh.put(RenderingHints.KEY_RENDERING,
-                    RenderingHints.VALUE_RENDER_QUALITY);
-            buffer.setRenderingHints(rh);
+            buffer.setRenderingHints(getOptimalRenderingHints());
 
             update();
             drawOnBuffer();
             drawOnScreen();
-
-            long sleep = SLEEP - (System.currentTimeMillis() - before);
-            if (sleep < 0) {
-                sleep = 4;
-            }
-            try {
-                Thread.sleep(sleep);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            before = System.currentTimeMillis();
+            sleep();
         }
-
     }
 
     private void update() {
@@ -86,5 +56,53 @@ public class GameWindow {
         graphics2D.drawImage(bufferedImage, 0, 0, panel);
         Toolkit.getDefaultToolkit().sync();
         graphics2D.dispose();
+    }
+
+    private void sleep() {
+        try {
+            Thread.sleep(getSleepTime());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        updateSyncTime();
+    }
+
+    private void updateSyncTime() {
+        before = System.currentTimeMillis();
+    }
+
+    private long getSleepTime() {
+        long sleep = SLEEP - (System.currentTimeMillis() - before);
+        if (sleep < 0) {
+            sleep = 4;
+        }
+        return sleep;
+    }
+
+    private RenderingHints getOptimalRenderingHints() {
+        RenderingHints rh = new RenderingHints(
+                RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+        rh.put(RenderingHints.KEY_RENDERING,
+                RenderingHints.VALUE_RENDER_QUALITY);
+        return rh;
+    }
+
+    private void initializePanel() {
+        panel = new JPanel();
+        panel.setBackground(Color.blue);
+        panel.setFocusable(true);
+        panel.setDoubleBuffered(true);
+        frame.add(panel);
+    }
+
+    private void initializeFrame() {
+        frame = new JFrame();
+        frame.setSize(800, 600);
+        frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
+        frame.setTitle("Bouncing Ball Game");
+        //setUndecorated(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 }
