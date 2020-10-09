@@ -30,9 +30,8 @@ public class Ball {
         }
     }
 
-    public void draw(Graphics2D buffer) {
-        buffer.setPaint(Color.red);
-        buffer.fillOval(x, y, radius * 2, radius * 2);
+    public void draw(Buffer buffer) {
+        buffer.drawCircle(x, y, radius, Color.red);
     }
 
     public boolean hasTouchBound() {

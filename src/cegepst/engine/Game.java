@@ -16,7 +16,7 @@ public abstract class Game {
     public abstract void initialize();
     public abstract void conclude();
     public abstract void update();
-    public abstract void draw(Graphics2D buffer);
+    public abstract void draw(Buffer buffer);
 
     public void start() {
         initialize();
